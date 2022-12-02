@@ -1,8 +1,8 @@
 import imutils
 import os
 import cv2
-img_path = r'D:\yanyi\shixi\puyang\zifu2\images/'
-label_path = r'D:\yanyi\shixi\puyang\zifu2\labels/'
+img_path = r'D:\yanyi\xianyu\xirou\images/'
+label_path = r'D:\yanyi\xianyu\xirou\txt/'
 f = os.listdir(img_path)
 label_id = []
 def paint(label_file, img_file):
@@ -27,7 +27,7 @@ def paint(label_file, img_file):
     # img2 = imutils.resize(img,width=1600)
     cv2.imshow('Ima', img)
     # print(sorted(label_id))
-    cv2.waitKey(1)
+    cv2.waitKey(0)
 
     cv2.destroyAllWindows()
 for i in f:

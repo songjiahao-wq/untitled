@@ -1,3 +1,4 @@
+"""xml转txt"""
 import xml.etree.ElementTree as ET
 import pickle
 import os
@@ -21,7 +22,7 @@ def convert(size, box):
     h = h*dh
     return (x,y,w,h)
 def convert_annotation(image_id):
-    in_file = open('/project/train/src_repo/dataset/Annotations/%s.xml'%( image_id))
+    in_file = open('/project/train/src_repo/dataset/Annotations/%s.xml'%( image_id)) #输入文件
     out_file = open('/project/train/src_repo/dataset/labels/%s.txt'%(image_id), 'w')
     tree=ET.parse(in_file)
     root = tree.getroot()
