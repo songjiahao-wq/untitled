@@ -1,6 +1,6 @@
 import os
-imgpath=r'D:\app\PotPlayer\Capture\Times7.5_1\MyVideo_2'
-labelpath=r'D:\app\PotPlayer\Capture\Times7.5_1\MyVideo_2txt'
+imgpath=r'D:\songjiahao\DATA\smokke\VOC\images'
+labelpath=r'D:\songjiahao\DATA\smokke\VOC\Annotions'
 
 imglist=os.listdir(imgpath)
 labellist=os.listdir(labelpath)
@@ -8,8 +8,8 @@ for i,name in enumerate(imglist):
     imglist[i] = name.split('.')[0]
 for j,name in enumerate(labellist):
     labellist[j] = name.split('.')[0]
-imglist = sorted([int(i) for i in imglist])
-labellist = sorted([int(i) for i in labellist])
+# imglist = sorted([int(i) for i in imglist])
+# labellist = sorted([int(i) for i in labellist])
 
 id = 1
 print(imglist)

@@ -11,6 +11,7 @@ class sa_layer(nn.Module):
     Args:
         k_size: Adaptive selection of kernel size
         SA-NET：融合空域与通道注意力，提出置换注意力机制
+        https://zhuanlan.zhihu.com/p/361155486
     """
 
     def __init__(self, channel, groups=64):
@@ -59,6 +60,25 @@ class sa_layer(nn.Module):
 
         out = self.channel_shuffle(out, 2)
         return out
+
+class SEWeightModule(nn.Module):
+
+    def __init__(self, channels, reduction=16):
+        super(SEWeightModule, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc1 = nn.Conv2d(channels, channels//reduction, kernel_size=1, padding=0)
+        self.relu = nn.ReLU(inplace=True)
+        self.fc2 = nn.Conv2d(channels//reduction, channels, kernel_size=1, padding=0)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        out = self.avg_pool(x)
+        out = self.fc1(out)
+        out = self.relu(out)
+        out = self.fc2(out)
+        weight = self.sigmoid(out)
+
+        return weight
 # 空间金字塔切分注意力模块
 # https://github.com/songjiahao-wq/EPSANet
 def conv(in_planes, out_planes, kernel_size=3, stride=1, padding=1, dilation=1, groups=1):
@@ -77,7 +97,7 @@ class PSAModule(nn.Module):
                             stride=stride, groups=conv_groups[2])
         self.conv_4 = conv(inplans, planes//4, kernel_size=conv_kernels[3], padding=conv_kernels[3]//2,
                             stride=stride, groups=conv_groups[3])
-        self.se = sa_layer(planes // 4)
+        self.se = SEWeightModule(planes // 4)
         self.split_channel = planes // 4
         self.softmax = nn.Softmax(dim=1)
 
@@ -106,11 +126,13 @@ class PSAModule(nn.Module):
                 out = x_se_weight_fp
             else:
                 out = torch.cat((x_se_weight_fp, out), 1)
+        return out
 # SPP+SE
-class SPA(nn.Layer):
+class SPA(nn.Module):
     def __init__(self, channel, reduction=16):
         super().__init__()
         self.avg_pool1 = nn.AdaptiveAvgPool2D(1)
+
         self.avg_pool2 = nn.AdaptiveAvgPool2D(2)
         self.avg_pool4 = nn.AdaptiveAvgPool2D(4)
         self.fc = nn.Sequential(
@@ -127,4 +149,13 @@ class SPA(nn.Layer):
         y3 = self.avg_pool4(x).reshape((b, -1))
         y = torch.concat((y1, y2, y3), 1)
         y = self.fc(y).reshape((b, c, 1, 1))
-        return x * y
+        return x * y,
+
+if __name__ =="__main__":
+    x = torch.randn(2,128, 20, 20)
+    x2 = torch.randn(2,128, 20, 20)
+    out = torch.add(x, x2)
+    print(torch.cat((x,x2),1).shape)
+    print(out.shape)
+    # model = sa_layer
+    # print(model(x))

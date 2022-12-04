@@ -1,8 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
 
-dirpath = r'D:\yanyi\shixi\puyang\puyang8.6\01\xml/'  # 原来存放xml文件的目录
-newdir = r'D:\yanyi\shixi\puyang\puyang8.6\01\txt/'  # 修改label后形成的txt目录
+dirpath = r'D:\songjiahao\DATA\smokke\VOC\AUG\AugAnnotions2/'  # 原来存放xml文件的目录
+newdir = r'D:\songjiahao\DATA\smokke\VOC\AUG\labels/'  # 修改label后形成的txt目录
 
 if not os.path.exists(newdir):
     os.makedirs(newdir)
@@ -16,7 +16,8 @@ for fp in os.listdir(dirpath):
 
     width = float(sz[0].text)
     height = float(sz[1].text)
-    filename = root.find('filename').text
+    # filename = root.find('filename').text
+    filename = "1"
     print(fp)
 
     for child in root.findall('object'):  # 找到图片中的所有框
@@ -34,9 +35,10 @@ for fp in os.listdir(dirpath):
         except ZeroDivisionError:
             print(filename, '的 width有问题')
 
+
         with open(os.path.join(newdir, fp.split('.')[0] + '.txt'), 'a+') as f:
             print(child.find('name').text)
-            if child.find('name').text =='gang':
+            if child.find('name').text =='smoke':
                 f.write(' '.join([str(0), str(x_center), str(y_center), str(abs(w)), str(abs(h)) + '\n']))
-            if child.find('name').text =='b':
-                f.write(' '.join([str(1), str(x_center), str(y_center), str(abs(w)), str(abs(h)) + '\n']))
+            # if child.find('name').text =='b':
+            #     f.write(' '.join([str(1), str(x_center), str(y_center), str(abs(w)), str(abs(h)) + '\n']))

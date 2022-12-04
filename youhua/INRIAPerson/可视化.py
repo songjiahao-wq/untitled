@@ -1,8 +1,8 @@
 import imutils
 import os
 import cv2
-img_path = r'D:\yanyi\xianyu\xirou\images/'
-label_path = r'D:\yanyi\xianyu\xirou\txt/'
+img_path = r'D:\songjiahao\DATA\smokke\VOC\AUG\Augimages2/'
+label_path = r'D:\songjiahao\DATA\smokke\VOC\AUG\labels/'
 f = os.listdir(img_path)
 label_id = []
 def paint(label_file, img_file):

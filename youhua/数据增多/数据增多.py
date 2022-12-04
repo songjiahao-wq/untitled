@@ -46,10 +46,10 @@ def show_pic(img, bboxes=None, labels=None):
         y_max = bbox[3]
         cv2.rectangle(img, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (0, 255, 0), 3)
         cv2.putText(img, labels[i], (int(x_min), int(y_min)), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-    cv2.namedWindow('pic', 0)  # 1表示原图
-    cv2.moveWindow('pic', 0, 0)
-    cv2.resizeWindow('pic', 1200, 800)  # 可视化的图片大小
-    cv2.imshow('pic', img)
+    # cv2.namedWindow('pic', 0)  # 1表示原图
+    # cv2.moveWindow('pic', 0, 0)
+    # cv2.resizeWindow('pic', 1200, 800)  # 可视化的图片大小
+    # cv2.imshow('pic', img)
     if cv2.waitKey(1) == ord('q'):
         cv2.destroyAllWindows()
         sys.exit()
@@ -379,23 +379,23 @@ class DataAugmentForObjectDetection():
         change_num = 0  # 改变的次数
         print('------')
         while change_num < 1:  # 默认至少有一种数据增强生效
-            # if random.random() < self.crop_rate:  # 裁剪
-            #     print('裁剪')
-            #     change_num += 1
-            #     img, bboxes = self._crop_img_bboxes(img, bboxes)
-            #
-            # if random.random() > self.rotation_rate:  # 旋转
-            #     print('旋转')
-            #     change_num += 1
-            #     angle = random.uniform(-self.max_rotation_angle, self.max_rotation_angle)
-            #     #                 angle = random.sample([90, 180, 270],1)[0]
-            #     scale = random.uniform(0.7, 0.8)
-            #     img, bboxes = self._rotate_img_bbox(img, bboxes, angle, scale)
-            #
-            # if random.random() < self.shift_rate:  # 平移
-            #     print('平移')
-            #     change_num += 1
-            #     img, bboxes = self._shift_pic_bboxes(img, bboxes)
+            if random.random() < self.crop_rate:  # 裁剪
+                print('裁剪')
+                change_num += 1
+                img, bboxes = self._crop_img_bboxes(img, bboxes)
+
+            if random.random() > self.rotation_rate:  # 旋转
+                print('旋转')
+                change_num += 1
+                angle = random.uniform(-self.max_rotation_angle, self.max_rotation_angle)
+                #                 angle = random.sample([90, 180, 270],1)[0]
+                scale = random.uniform(0.7, 0.8)
+                img, bboxes = self._rotate_img_bbox(img, bboxes, angle, scale)
+
+            if random.random() < self.shift_rate:  # 平移
+                print('平移')
+                change_num += 1
+                img, bboxes = self._shift_pic_bboxes(img, bboxes)
 
             if random.random() > self.change_light_rate:  # 改变亮度
                 print('亮度')
@@ -407,16 +407,16 @@ class DataAugmentForObjectDetection():
                 change_num += 1
                 img = self._addNoise(img)
 
-            # if random.random() < self.cutout_rate:  # cutout
-            #     print('cutout')
-            #     change_num += 1
-            #     img = self._cutout(img, bboxes, length=self.cut_out_length, n_holes=self.cut_out_holes,
-            #                        threshold=self.cut_out_threshold)
+            if random.random() < self.cutout_rate:  # cutout
+                print('cutout')
+                change_num += 1
+                img = self._cutout(img, bboxes, length=self.cut_out_length, n_holes=self.cut_out_holes,
+                                   threshold=self.cut_out_threshold)
 
-            # if random.random() < self.flip_rate:  # 翻转
-            #     print('翻转')
-            #     change_num += 1
-            #     img, bboxes = self._filp_pic_bboxes(img, bboxes)
+            if random.random() < self.flip_rate:  # 翻转
+                print('翻转')
+                change_num += 1
+                img, bboxes = self._filp_pic_bboxes(img, bboxes)
 
             print('\n')
         # print('------')
@@ -506,15 +506,21 @@ need_aug_num = 2
 
 dataAug = DataAugmentForObjectDetection()
 
-source_pic_root_path = r'C:\DATA\crowhuman\images\test/'  # 原图所在文件夹路径
-source_xml_root_path = r'C:\DATA\crowhuman\Crowdhumanxml\test/'  # 原XML文件所在文件夹路径
-img_save_path = r'C:\DATA\crowhuman\images\augtest/'  # 新图片存储路径
-save_dir = r'C:\DATA\crowhuman\Crowdhumanxml\augtest/'  # 新xml存储路径
-# os.makedirs(img_save_path)
-# os.makedirs(save_dir)
+source_pic_root_path = r'D:\songjiahao\DATA\smokke\VOC\images/'  # 原图所在文件夹路径
+source_xml_root_path = r'D:\songjiahao\DATA\smokke\VOC\Annotions/'  # 原XML文件所在文件夹路径
+img_save_path = r'D:\songjiahao\DATA\smokke\VOC\augimages/'  # 新图片存储路径
+save_dir = r'D:\songjiahao\DATA\smokke\VOC\augAnnotions/'  # 新xml存储路径
+# 如果保存文件夹不存在就创建
+if not os.path.exists(img_save_path):
+    os.mkdir(img_save_path)
+
+if not os.path.exists(save_dir):
+    os.mkdir(save_dir)
+
 for parent, _, files in os.walk(source_pic_root_path):
     for file in files:
         cnt = 0
+        print(file)
         while cnt < need_aug_num:
             pic_path = os.path.join(parent, file)
             xml_path = os.path.join(source_xml_root_path, file[:-4] + '.xml')
