@@ -1,7 +1,7 @@
 from cvzone.FaceDetectionModule import FaceDetector
 import cv2
 import imutils
-cap = cv2.VideoCapture(r'data/song.jpg')
+cap = cv2.VideoCapture(r'D:\yanyi\untitled\data\song.jpg')
 detector = FaceDetector()
 
 while True:

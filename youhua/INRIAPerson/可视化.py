@@ -1,8 +1,8 @@
 import imutils
 import os
 import cv2
-img_path = r'D:\songjiahao\DATA\smokke\VOC\AUG\Augimages2/'
-label_path = r'D:\songjiahao\DATA\smokke\VOC\AUG\labels/'
+img_path = r'D:\songjiahao\DATA\Phone\phonecall_images/'
+label_path = r'D:\songjiahao\DATA\Phone\phonecall_labels/'
 f = os.listdir(img_path)
 label_id = []
 def paint(label_file, img_file):
@@ -24,8 +24,9 @@ def paint(label_file, img_file):
         # if int(obj_line[0:2]) not in label_id:
         #     label_id.append(int(obj_line[0:2]))
 
-    # img2 = imutils.resize(img,width=1600)
+    img = imutils.resize(img,width=720)
     cv2.imshow('Ima', img)
+    # cv2.imwrite(f"./data/{os.path.basename(img_file)}")
     # print(sorted(label_id))
     cv2.waitKey(0)
 

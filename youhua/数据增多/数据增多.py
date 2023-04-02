@@ -502,14 +502,14 @@ def save_xml(image_name, category, bbox, file_dir, save_dir, channel=3):
     return
 
 
-need_aug_num = 2
+need_aug_num = 3
 
 dataAug = DataAugmentForObjectDetection()
 
 source_pic_root_path = r'D:\songjiahao\DATA\smokke\VOC\images/'  # 原图所在文件夹路径
 source_xml_root_path = r'D:\songjiahao\DATA\smokke\VOC\Annotions/'  # 原XML文件所在文件夹路径
-img_save_path = r'D:\songjiahao\DATA\smokke\VOC\augimages/'  # 新图片存储路径
-save_dir = r'D:\songjiahao\DATA\smokke\VOC\augAnnotions/'  # 新xml存储路径
+img_save_path = r'D:\songjiahao\DATA\smokke\VOC\AUG2\augimages/'  # 新图片存储路径
+save_dir = r'D:\songjiahao\DATA\smokke\VOC\AUG2\augAnnotions/'  # 新xml存储路径
 # 如果保存文件夹不存在就创建
 if not os.path.exists(img_save_path):
     os.mkdir(img_save_path)
