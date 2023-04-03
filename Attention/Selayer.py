@@ -3,7 +3,7 @@ import torch
 
 class SeLayer(nn.Module):
     def __init__(self, channel, reduction=4):
-        super(SELayer, self).__init__()
+        super(SeLayer, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
                 nn.Linear(channel, channel // reduction),
@@ -12,27 +12,29 @@ class SeLayer(nn.Module):
 
     def forward(self, x):
         b, c, _, _ = x.size()
-        y = self.avg_pool(x).view(b, c)
+        y = self.avg_pool(x)
+        y = y.view(b,c)
+        # y = self.avg_pool(x).view(b, c)
         y = self.fc(y).view(b, c, 1, 1)
         y = torch.clamp(y, 0, 1)
         return x * y
-class SELayer(nn.Module):
-    def __init__(self, channel, reduction=4):
-        super(SELayer, self).__init__()
-        self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.fc = nn.Sequential(
-            nn.Linear(channel, channel // reduction),
-            nn.ReLU(inplace=True),
-            nn.Linear(channel // reduction, channel),
-            h_sigmoid()
-        )
-
-    def forward(self, x):
-        b, c, _, _ = x.size()
-        y = self.avg_pool(x)
-        y = y.view(b, c)
-        y = self.fc(y).view(b, c, 1, 1)
-        return x * y
+# class SELayer(nn.Module):
+#     def __init__(self, channel, reduction=4):
+#         super(SELayer, self).__init__()
+#         self.avg_pool = nn.AdaptiveAvgPool2d(1)
+#         self.fc = nn.Sequential(
+#             nn.Linear(channel, channel // reduction),
+#             nn.ReLU(inplace=True),
+#             nn.Linear(channel // reduction, channel),
+#             h_sigmoid()
+#         )
+#
+#     def forward(self, x):
+#         b, c, _, _ = x.size()
+#         y = self.avg_pool(x)
+#         y = y.view(b, c)
+#         y = self.fc(y).view(b, c, 1, 1)
+#         return x * y
 # class SqueezeExcite(nn.Module):
 #     def __init__(self, in_chs, se_ratio=0.25, reduced_base_chs=None,
 #                  act_layer=nn.ReLU, gate_fn=hard_sigmoid, divisor=4, **_):
@@ -52,9 +54,9 @@ class SELayer(nn.Module):
 #         x = x * self.gate_fn(x_se)
 #         return x
 if __name__ =='__main__':
-    x = torch.randn(1, 64, 32, 48)  # 用来生成随机数字的tensor 输出一个64*32*48的张量
+    x = torch.randn(1, 64, 32, 32)  # 用来生成随机数字的tensor 输出一个64*32*48的张量
     b, c, h, w = x.shape
     net1 = SeLayer(c, c)
-    net2 = SELayer(c, c)
-    y1, y2 = net1(x),net2(x)
-    if y1==y2:print("aaaaa")
+    # net2 = SELayer(c, c)
+    y1 = net1(x)
+    print(y1.shape)

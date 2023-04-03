@@ -149,7 +149,7 @@ class SPA(nn.Module):
         y3 = self.avg_pool4(x).reshape((b, -1))
         y = torch.concat((y1, y2, y3), 1)
         y = self.fc(y).reshape((b, c, 1, 1))
-        return x * y,
+        return x * y
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     # Pad to 'same' shape outputs
     if d > 1:
