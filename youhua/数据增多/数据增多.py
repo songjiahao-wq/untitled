@@ -502,7 +502,7 @@ def save_xml(image_name, category, bbox, file_dir, save_dir, channel=3):
     return
 
 
-need_aug_num = 3
+need_aug_num = 3 #扩充数量
 
 dataAug = DataAugmentForObjectDetection()
 
