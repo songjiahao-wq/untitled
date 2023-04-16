@@ -3,8 +3,8 @@
 #对文件名重新顺序命名
 import os
 
-imgpath = r'D:/songjiahao/DATA/crowdhumancoco/images/'
-labelpath = r'D:/songjiahao/DATA/crowdhumancoco/labels/'
+imgpath = r'F:\BaiduNetdiskDownload\HardHat\test\images/'
+labelpath = r'F:\BaiduNetdiskDownload\HardHat\test\labels/'
 
 imglist = os.listdir(imgpath)
 labellist = os.listdir(labelpath)
