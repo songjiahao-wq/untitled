@@ -115,9 +115,9 @@ class RFCAConv(nn.Module):
 
         g2 = self.group_conv(x)
 
-        out1 = g2 * group1
-        out2 = g2 * group2
-        out3 = g2 * group3
+        out1 = g2 * group1.expand_as(g2)
+        out2 = g2 * group2.expand_as(g2)
+        out3 = g2 * group3.expand_as(g2)
 
         out = sum([out1, out2, out3])
         # 获取输入特征图的形状
@@ -136,25 +136,25 @@ class RFCAConv(nn.Module):
 
 # Example usage:
 
-# input_tensor = torch.randn(1, 32, 40, 40)  # Batch x Channels x Height x Width
-# channel_attention_module = RFCAConv(c1=32 ,c2=64, kernel_size=3,stride=2).eval()
-# output_tensor = channel_attention_module(input_tensor)
-# print(output_tensor.shape)
+input_tensor = torch.randn(1, 32, 40, 40)  # Batch x Channels x Height x Width
+channel_attention_module = RFCAConv(c1=32 ,c2=64, kernel_size=3,stride=2).eval()
+output_tensor = channel_attention_module(input_tensor)
+print(output_tensor.shape)
 
-input = torch.randn(1,288,40,40)
-batch_size, channels, height, width = input.shape
-
-        # 计算输出特征图的通道数
-output_channels = channels // 9
-#(1,32,120,120)
-out = input.view(1,32,120,120)
-out2 = out.view(batch_size, output_channels, 3, 3, height, width).permute(0, 1, 4, 2, 5,3).\
-                                                reshape(batch_size, output_channels, 3 * height, 3 * width)
-out3 = out.view(batch_size, output_channels, 3, 3, height, width).permute(0, 1, 4, 2, 5,3).\
-                                                reshape(batch_size, output_channels, 3 * height, 3 * width)
-print(out.shape)
-print(out2.shape)
-are_tensors_equal = torch.allclose(out, out2)  # True
-print(are_tensors_equal)
-are_tensors_equal = torch.allclose(out3, out2)  # True
-print(are_tensors_equal)
+# input = torch.randn(1,288,40,40)
+# batch_size, channels, height, width = input.shape
+#
+#         # 计算输出特征图的通道数
+# output_channels = channels // 9
+# #(1,32,120,120)
+# out = input.view(1,32,120,120)
+# out2 = out.view(batch_size, output_channels, 3, 3, height, width).permute(0, 1, 4, 2, 5,3).\
+#                                                 reshape(batch_size, output_channels, 3 * height, 3 * width)
+# out3 = out.view(batch_size, output_channels, 3, 3, height, width).permute(0, 1, 4, 2, 5,3).\
+#                                                 reshape(batch_size, output_channels, 3 * height, 3 * width)
+# print(out.shape)
+# print(out2.shape)
+# are_tensors_equal = torch.allclose(out, out2)  # True
+# print(are_tensors_equal)
+# are_tensors_equal = torch.allclose(out3, out2)  # True
+# print(are_tensors_equal)
