@@ -3,20 +3,20 @@
 #对文件名重新顺序命名
 import os
 
-imgpath = r'F:\BaiduNetdiskDownload\HardHat\test\images/'
-labelpath = r'F:\BaiduNetdiskDownload\HardHat\test\labels/'
+imgpath = r'F:\sjh\code\my\datasets\VOC_five\images/'
+labelpath = r'F:\sjh\code\my\datasets\VOC_five\labels/'
 
 imglist = os.listdir(imgpath)
 labellist = os.listdir(labelpath)
-imgn = 0000
-laben = 0000
+imgn = 00000
+laben = 00000
 
 # imglist.sort(key=lambda x: int(x[:-4])) #对‘.’进行切片，并取列表的第一个值（左边的文件名）转化整数型
 
 # print(sorted(labellist))
 for imaname in imglist:
 
-    img_id = '%04d' %imgn
+    img_id = '%05d' %imgn
     imgname = imaname.strip('.jpg')
     oriimg= imgpath + imgname + '.jpg'
     newimname = str(img_id) + '.jpg'
@@ -42,7 +42,10 @@ for imaname in imglist:
     label_size = os.path.getsize(orilabel)
     if img_size == 0 or label_size ==0:
         print('文件是空的')
+        print(orilabel,'文件已删除')
+        os.remove(orilabel)
+        os.remove(oriimg)
         continue
     # print(newimg,newlabel)
-    os.rename(oriimg, newimg)
-    os.rename(orilabel, newlabel)
+    # os.rename(oriimg, newimg)
+    # os.rename(orilabel, newlabel)

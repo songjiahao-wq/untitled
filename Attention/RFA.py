@@ -95,13 +95,13 @@ class RFCAConv(nn.Module):
     def __init__(self, c1, c2, kernel_size, stride):
         super(RFCAConv, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.group_conv1 = Conv_L(c1, 9 *c1, k=1, g=c1)
-        self.group_conv2 = Conv_L(c1, 9 *c1, k=3, g=c1)
-        self.group_conv3 = Conv_L(c1, 9 *c1, k=5, g=c1)
+        self.group_conv1 = Conv_L(c1, 3 *c1, k=1, g=c1)
+        self.group_conv2 = Conv_L(c1, 3 *c1, k=3, g=c1)
+        self.group_conv3 = Conv_L(c1, 3 *c1, k=5, g=c1)
 
         self.softmax = nn.Softmax(dim=1)
 
-        self.group_conv = Conv(c1, 9 * c1, k=3, g=c1)
+        self.group_conv = Conv(c1, 3 * c1, k=3, g=c1)
         self.convDown = Conv(c1, c1, k=3, s=3)
         self.CA = CAConv(c1, c2, kernel_size, stride)
     def forward(self, x):
@@ -115,11 +115,11 @@ class RFCAConv(nn.Module):
 
         g2 = self.group_conv(x)
 
-        out1 = g2 * group1.expand_as(g2)
-        out2 = g2 * group2.expand_as(g2)
-        out3 = g2 * group3.expand_as(g2)
+        out1 = g2 * group1
+        out2 = g2 * group2
+        out3 = g2 * group3
 
-        out = sum([out1, out2, out3])
+        out = torch.cat([out1, out2, out3],dim=1)
         # 获取输入特征图的形状
         batch_size, channels, height, width = out.shape
 
@@ -133,28 +133,53 @@ class RFCAConv(nn.Module):
         out = self.CA(out)
         return out
 
+import torch
+import torch.nn as nn
+
+class RFAConv(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1):
+        super(RFAConv, self).__init__()
+
+        # Adaptive Average Pooling
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+
+        # Non-shared Convolution layers
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size, stride=stride, padding=kernel_size//2)
+        self.conv2 = nn.Conv2d(in_channels, out_channels, kernel_size, stride=stride, padding=kernel_size//2)
+        self.conv3 = nn.Conv2d(in_channels, out_channels, kernel_size, stride=stride, padding=kernel_size//2)
+
+        self.softmax = nn.Softmax(dim=1)
+        self.conv4 = nn.Conv2d(in_channels, out_channels, 1, 1)
+
+    def forward(self, x):
+        b, c, _, _ = x.size()
+
+        y = self.avg_pool(x)
+        y = y.view(b, c)
+
+        w1 = self.softmax(y)
+        w2 = self.softmax(y)
+        w3 = self.softmax(y)
+
+        x1 = self.conv1(x)
+        x2 = self.conv2(x)
+        x3 = self.conv3(x)
+        if w1.shape[1] == x1.shape[1]:
+            out = w1.unsqueeze(2).unsqueeze(3) * x1 + \
+                  w2.unsqueeze(2).unsqueeze(3) * x2 + \
+                  w3.unsqueeze(2).unsqueeze(3) * x3
+        else:
+            out = self.conv4(w1.unsqueeze(2).unsqueeze(3)) * x1+ \
+                self.conv4(w2.unsqueeze(2).unsqueeze(3)) * x2+ \
+                self.conv4(w3.unsqueeze(2).unsqueeze(3)) * x3
+
+        return out
+
 
 # Example usage:
 
 input_tensor = torch.randn(1, 32, 40, 40)  # Batch x Channels x Height x Width
-channel_attention_module = RFCAConv(c1=32 ,c2=64, kernel_size=3,stride=2).eval()
+channel_attention_module =  RFAConv(32 ,64, kernel_size=3,stride=2).eval()
 output_tensor = channel_attention_module(input_tensor)
 print(output_tensor.shape)
 
-# input = torch.randn(1,288,40,40)
-# batch_size, channels, height, width = input.shape
-#
-#         # 计算输出特征图的通道数
-# output_channels = channels // 9
-# #(1,32,120,120)
-# out = input.view(1,32,120,120)
-# out2 = out.view(batch_size, output_channels, 3, 3, height, width).permute(0, 1, 4, 2, 5,3).\
-#                                                 reshape(batch_size, output_channels, 3 * height, 3 * width)
-# out3 = out.view(batch_size, output_channels, 3, 3, height, width).permute(0, 1, 4, 2, 5,3).\
-#                                                 reshape(batch_size, output_channels, 3 * height, 3 * width)
-# print(out.shape)
-# print(out2.shape)
-# are_tensors_equal = torch.allclose(out, out2)  # True
-# print(are_tensors_equal)
-# are_tensors_equal = torch.allclose(out3, out2)  # True
-# print(are_tensors_equal)
