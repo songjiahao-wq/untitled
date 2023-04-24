@@ -58,7 +58,7 @@ def show_pic(img, bboxes=None, labels=None):
 # 图像均为cv2读取
 class DataAugmentForObjectDetection():
     def __init__(self, rotation_rate=0.5, max_rotation_angle=30,
-                 crop_rate=0.5, shift_rate=0.5, change_light_rate=0.5,
+                 crop_rate=0.5, shift_rate=0.5, change_light_rate=0.5,change_saturation_rate=0.5,
                  add_noise_rate=0.5, flip_rate=0.5,
                  cutout_rate=0.5, cut_out_length=50, cut_out_holes=1, cut_out_threshold=0.5):
         self.rotation_rate = rotation_rate
@@ -66,6 +66,7 @@ class DataAugmentForObjectDetection():
         self.crop_rate = crop_rate
         self.shift_rate = shift_rate
         self.change_light_rate = change_light_rate
+        self.change_saturation_rate = change_saturation_rate
         self.add_noise_rate = add_noise_rate
         self.flip_rate = flip_rate
         self.cutout_rate = cutout_rate
@@ -91,6 +92,20 @@ class DataAugmentForObjectDetection():
         # random.seed(int(time.time()))
         flag = random.uniform(0.5, 1.5)  # flag>1为调暗,小于1为调亮
         return exposure.adjust_gamma(img, flag)
+
+    def _changesaturation(self, img, saturation_factor):
+        """
+
+        :param img:
+        :param saturation_factor: 饱和度调节,大于1为增强饱和度
+        :return:
+        """
+        hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        #缩放所有像素点的S通道
+        hsv_img[:, :, 1] = np.clip(hsv_img[:, :, 1] * saturation_factor, 0, 255)
+        #将图片转化会BGR
+        output_img = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2BGR)
+        return output_img
 
     # cutout
     def _cutout(self, img, bboxes, length=100, n_holes=1, threshold=0.5):
@@ -401,6 +416,11 @@ class DataAugmentForObjectDetection():
                 print('亮度')
                 change_num += 1
                 img = self._changeLight(img)
+
+            if random.random() > self.change_saturation_rate:  # 改变亮度
+                print('饱和度')
+                change_num += 1
+                img = self._changesaturation(img, 1.5)
 
             if random.random() < self.add_noise_rate:  # 加噪声
                 print('加噪声')
