@@ -526,10 +526,10 @@ need_aug_num = 3 #扩充数量
 
 dataAug = DataAugmentForObjectDetection()
 
-source_pic_root_path = r'D:\songjiahao\DATA\smokke\VOC\images/'  # 原图所在文件夹路径
-source_xml_root_path = r'D:\songjiahao\DATA\smokke\VOC\Annotions/'  # 原XML文件所在文件夹路径
-img_save_path = r'D:\songjiahao\DATA\smokke\VOC\AUG2\augimages/'  # 新图片存储路径
-save_dir = r'D:\songjiahao\DATA\smokke\VOC\AUG2\augAnnotions/'  # 新xml存储路径
+source_pic_root_path = r'F:\sjh\DATA2\xianyu\mydata\images\train/'  # 原图所在文件夹路径
+source_xml_root_path = r'F:\sjh\DATA2\xianyu\mydata\VOC2007\Annotations/'  # 原XML文件所在文件夹路径
+img_save_path = r'F:\sjh\DATA2\xianyu\mydata\VOC2007\augimages/'  # 新图片存储路径
+save_dir = r'F:\sjh\DATA2\xianyu\mydata\VOC2007\augAnnotions/'  # 新xml存储路径
 # 如果保存文件夹不存在就创建
 if not os.path.exists(img_save_path):
     os.mkdir(img_save_path)
@@ -544,7 +544,8 @@ for parent, _, files in os.walk(source_pic_root_path):
         while cnt < need_aug_num:
             pic_path = os.path.join(parent, file)
             xml_path = os.path.join(source_xml_root_path, file[:-4] + '.xml')
-
+            if not os.path.exists(xml_path):
+                break
             coords = parse_xml(xml_path)  # 解析得到box信息，格式为[[x_min,y_min,x_max,y_max,name]]
             coordss = [coord[:4] for coord in coords]
             labels = [coord[4] for coord in coords]
@@ -553,7 +554,8 @@ for parent, _, files in os.walk(source_pic_root_path):
 
             auged_img, auged_bboxes = dataAug.dataAugment(img, coordss)
             cnt += 1
-            cv2.imwrite(img_save_path + file[:-4] + '.jpg', auged_img)
-            save_xml(file[:-4] + '.jpg', labels, auged_bboxes, file_dir=img_save_path, save_dir=save_dir)
+
+            cv2.imwrite(img_save_path + file[:-4]+'_'+ str(cnt)+ '.jpg', auged_img)
+            save_xml(file[:-4]+'_' +str(cnt) + '.jpg', labels, auged_bboxes, file_dir=img_save_path, save_dir=save_dir)
             show_pic(auged_img, auged_bboxes, labels)  # 强化后的图
 cv2.destroyAllWindows()
