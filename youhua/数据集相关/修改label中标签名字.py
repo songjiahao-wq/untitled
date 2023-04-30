@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import os
 
 
-def reLabelName(old_xml_path, new_xml_path, new_label):
+def reLabelName(old_xml_path, new_xml_path, newlabel):
     # 判断路径是否存在
     if os.path.exists(old_xml_path):
         # 获取该目录下所有文件，存入列表中

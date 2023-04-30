@@ -1,9 +1,10 @@
 import imutils
 import os
 import cv2
-img_path = r'D:\songjiahao\DATA\Phone\phonecall_images/'
-label_path = r'D:\songjiahao\DATA\Phone\phonecall_labels/'
+img_path = r'D:/my_job/DATA/INRIAPerson/inriaPerson/train/'
+label_path = r'D:/my_job/DATA/INRIAPerson/inriaPerson/train/'
 f = os.listdir(img_path)
+f = [i  for i in f if i.endswith('.png')]
 label_id = []
 def paint(label_file, img_file):
     #读取照片
@@ -40,5 +41,5 @@ for i in f:
     img_path_name = img_path + i
     # print(img_path_name,label_path_name)
     # print(img_path_name)
-    if label_path_name.endswith('.txt') and img_path_name.endswith('.jpg'):
+    if label_path_name.endswith('.txt') and img_path_name.endswith('.jpg') or img_path_name.endswith('.png'):
         paint(label_path_name,img_path_name)
