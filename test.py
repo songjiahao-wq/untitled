@@ -1,6 +1,4 @@
-import os
-path = r'D:\my_job\DATA\INRIAPerson\inriaPerson\train'
-
-file = os.listdir(path)
-file = [i  for i in file if i.endswith('.png')]
-print(file)
+import torch
+import torch.nn as nn
+x = torch.randn(1,3,640,640)
+print(nn.AdaptiveAvgPool2d(1)(x).shape)

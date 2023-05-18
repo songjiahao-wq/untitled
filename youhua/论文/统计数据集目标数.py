@@ -6,7 +6,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 # 设置中文字体为微软雅黑
-plt.rcParams['font.sans-serif'] = 'SimHei'
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['font.sans-serif'] = 'SimSun'
 
 def getGtAreaAndRatio(label_dir):
     """
@@ -88,7 +89,7 @@ def analyAllSmallGt(data_dict):
 
 # 画图函数
 def plotAllSML(SML):
-    x = ['S:[0, 32x32]', 'M:[32x32, 96x96]', 'L:[96*96, 640x640]']
+    x = ['S:[0, 32x32]', 'M:[32x32, 96x96]', 'L:[96×96, 640x640]']
     fig = plt.figure(figsize=(10, 8))  # 画布大小和像素密度
     plt.bar(x, SML, width=0.5, align="center", color=['skyblue', 'orange', 'green'])
     for a, b, i in zip(x, SML, range(len(x))):  # zip 函数
@@ -104,7 +105,7 @@ def plotAllSML(SML):
 
 def plotSMLByClass(sml, c):
     if c == 0:
-        txt = 'Crowdhuman'
+        txt = 'person'
     elif c == 1:
         txt = 'Medium'
     elif c == 2:
@@ -115,11 +116,11 @@ def plotSMLByClass(sml, c):
     plt.bar(x, sml, width=0.5, align="center", color=['skyblue', 'orange', 'green'])
     for a, b, i in zip(x, sml, range(len(x))):  # zip 函数
         plt.text(a, b + 0.01, "%d" % int(sml[i]), ha='center', fontsize=15, color="r")  # plt.text 函数
-    plt.xticks(fontsize=15)
-    plt.yticks(fontsize=15)
-    plt.xlabel('gt大小', fontsize=16)
-    plt.ylabel('数量', fontsize=16)
-    plt.title('{}:小、中、大GT分布情况(640x640)'.format(txt), fontsize=16)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.xlabel('gt大小', fontsize=20)
+    plt.ylabel('数量', fontsize=20)
+    plt.title('{}:小、中、大GT分布情况(640x640)'.format(txt), fontsize=20)
     plt.show()
     # 保存到本地
     # plt.savefig("")
@@ -141,7 +142,7 @@ def plotAllSmallGt(sml):
 
 
 if __name__ == '__main__':
-    labeldir = r'D:\songjiahao\DATA\crowhuman\labels\train'
+    labeldir = r'F:\sjh\DATA\wider+crowd\labels\train'
     data_dict = getGtAreaAndRatio(labeldir)
     # 1、数据集所有类别小、中、大GT分布情况
     # SML = getAllSMLGtNum(data_dict)
