@@ -3,8 +3,8 @@
 #对文件名重新顺序命名
 import os
 
-imgpath = r'F:\sjh\code\my\datasets\VOC_five\images/'
-labelpath = r'F:\sjh\code\my\datasets\VOC_five\labels/'
+imgpath = r'D:\my_job\code\xianyu\datasets\Pneumonia\images\train/'
+labelpath = r'D:\my_job\code\xianyu\datasets\Pneumonia\labels\train/'
 
 imglist = os.listdir(imgpath)
 labellist = os.listdir(labelpath)
@@ -46,6 +46,6 @@ for imaname in imglist:
         os.remove(orilabel)
         os.remove(oriimg)
         continue
-    # print(newimg,newlabel)
-    # os.rename(oriimg, newimg)
-    # os.rename(orilabel, newlabel)
+    print(newimg,newlabel)
+    os.rename(oriimg, newimg)
+    os.rename(orilabel, newlabel)
