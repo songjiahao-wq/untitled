@@ -54,7 +54,11 @@ def show_pic(img, bboxes=None, labels=None):
         cv2.destroyAllWindows()
         sys.exit()
 
-
+'''
+rotation_rate=0.5(旋转), max_rotation_angle=30（旋转）, crop_rate=0.5（裁剪）, shift_rate=0.5（平移）, change_light_rate=0.5（调整亮度）,change_saturation_rate=0.5（改变饱和度）,
+add_noise_rate=0.5（加噪声）, flip_rate=0.5（翻转）,
+cutout_rate=0.5（cutout）, cut_out_length=50, cut_out_holes=1, cut_out_threshold=0.5
+'''
 # 图像均为cv2读取
 class DataAugmentForObjectDetection():
     def __init__(self, rotation_rate=0.5, max_rotation_angle=30,
@@ -417,7 +421,7 @@ class DataAugmentForObjectDetection():
                 change_num += 1
                 img = self._changeLight(img)
 
-            if random.random() > self.change_saturation_rate:  # 改变亮度
+            if random.random() > self.change_saturation_rate:  # 改变饱和度
                 print('饱和度')
                 change_num += 1
                 img = self._changesaturation(img, 1.5)
@@ -522,14 +526,14 @@ def save_xml(image_name, category, bbox, file_dir, save_dir, channel=3):
     return
 
 
-need_aug_num = 3 #扩充数量
+need_aug_num = 2 #扩充数量
 
 dataAug = DataAugmentForObjectDetection()
 
-source_pic_root_path = r'F:\sjh\DATA2\xianyu\mydata\images\train/'  # 原图所在文件夹路径
-source_xml_root_path = r'F:\sjh\DATA2\xianyu\mydata\VOC2007\Annotations/'  # 原XML文件所在文件夹路径
-img_save_path = r'F:\sjh\DATA2\xianyu\mydata\VOC2007\augimages/'  # 新图片存储路径
-save_dir = r'F:\sjh\DATA2\xianyu\mydata\VOC2007\augAnnotions/'  # 新xml存储路径
+source_pic_root_path = r'D:\my_job\code\xianyu\5.7\VOCdevkit3\VOC2007\JPEGImages/'  # 原图所在文件夹路径
+source_xml_root_path = r'D:\my_job\code\xianyu\5.7\VOCdevkit3\VOC2007\Annotations/'  # 原XML文件所在文件夹路径
+img_save_path = r'D:\my_job\code\xianyu\5.7\VOCdevkit3\VOC2007\augimages2/'  # 新图片存储路径
+save_dir = r'D:\my_job\code\xianyu\5.7\VOCdevkit3\VOC2007\augAnnotions2/'  # 新xml存储路径
 # 如果保存文件夹不存在就创建
 if not os.path.exists(img_save_path):
     os.mkdir(img_save_path)

@@ -3,11 +3,13 @@
 import os
 import re
 from PIL import Image
+from pathlib import Path
 
 sets=['train']
-#需要填写变量image_path、annotations_path、full_path
-image_path = r"D:\BaiduNetdiskDownload\59_INRIA Person Dataset\shuju1/"                          # 图片存放路径，路径固定
-annotations_path = r"D:\BaiduNetdiskDownload\59_INRIA Person Dataset\INRIAPerson\Test\annotations/" #文件夹目录                                          # INRIA标签存放路径
+#需要填写变量image_path、annotations_path、labels_path
+image_path = r"D:\my_job\DATA\INRIAPerson\train\pos/"                          # 图片存放路径，路径固定
+annotations_path = r"D:\my_job\DATA\INRIAPerson\train\annotations/" #文件夹目录                                          # INRIA标签存放路径
+labelspath = r'D:\my_job\DATA\INRIAPerson\labels1'
 annotations= os.listdir(annotations_path) #得到文件夹下的所有文件名称
 
 # 获取文件夹下所有图片的图片名
@@ -22,7 +24,7 @@ def get_name(file_dir):
 
 # 在labels目录下创建每个图片的标签txt文档
 def text_create(name,bnd):
-   full_path = r"D:\BaiduNetdiskDownload\59_INRIA Person Dataset\labels1/%s.txt"%(name)
+   full_path = labelspath + r"/%s.txt"%(name)
    size = get_size(name + '.png')
    convert_size = convert(size, bnd)
    file = open(full_path, 'a')
@@ -31,7 +33,7 @@ def text_create(name,bnd):
 
 # 获取要查询的图片的w,h
 def get_size(image_id):
-   im = Image.open(r'D:\BaiduNetdiskDownload\59_INRIA Person Dataset\INRIAPerson\Test\pos/%s'%(image_id))       # 源图片存放路径
+   im = Image.open(image_path + r'/%s'%(image_id))       # 源图片存放路径
    size = im.size
    w = size[0]
    h = size[1]
@@ -53,10 +55,10 @@ def convert(size, box):
 
 # 将处理的图片路径放入一个ｔｘｔ文件夹中
 for image_set in sets:
-   if not os.path.exists(r'D:\BaiduNetdiskDownload\59_INRIA Person Dataset\labels1'):
-      os.makedirs(r'D:\BaiduNetdiskDownload\59_INRIA Person Dataset\labels1')                     # 生成的yolo3标签存放路径，路径固定
+   if not os.path.exists(labelspath):
+      os.makedirs(labelspath)                     # 生成的yolo3标签存放路径，路径固定
    image_names = get_name(image_path)
-   list_file = open('2007_%s.txt'%(image_set), 'w')
+   list_file = open(str(Path(image_path).parent) +'2007_%s.txt'%(image_set), 'w')
    for image_name in image_names:
       list_file.write('%s\n'%(image_name))
    list_file.close()
