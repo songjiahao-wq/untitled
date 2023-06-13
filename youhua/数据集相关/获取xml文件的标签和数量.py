@@ -8,7 +8,7 @@ def count_num(indir):
     # 提取xml文件列表
     os.chdir(indir)
     annotations = os.listdir('.')
-    annotations = glob.glob(r'E:\tuberculosis-phonecamera\xml/' + '*.xml')
+    annotations = glob.glob(r'D:\xian_yu\data(1)\data2\kunchong/' + '*.xml')
 
     dict = {}  # 新建字典，用于存放各类标签名及其对应的数目
     for i, file in enumerate(annotations):  # 遍历xml文件
@@ -20,7 +20,7 @@ def count_num(indir):
 
         # 遍历文件的所有标签
         for obj in root.iter('object'):
-            name = obj.find('label').text
+            name = obj.find('name').text
             if (name in dict.keys()):
                 dict[name] += 1  # 如果标签不是第一次出现，则+1
             else:
