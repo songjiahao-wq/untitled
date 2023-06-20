@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import os
 
-
+new_label = 2
 def reLabelName(old_xml_path, new_xml_path, newlabel):
     # 判断路径是否存在
     if os.path.exists(old_xml_path):

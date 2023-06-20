@@ -7,7 +7,7 @@ import glob
 def count_num(indir):
     # 提取xml文件列表
     os.chdir(indir)
-    annotations = os.listdir('.')
+    annotations = os.listdir('..')
     annotations = glob.glob(r'D:\xian_yu\data(1)\data2\kunchong/' + '*.xml')
 
     dict = {}  # 新建字典，用于存放各类标签名及其对应的数目

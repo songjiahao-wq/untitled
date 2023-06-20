@@ -3,18 +3,18 @@
 
 import os
 
-label_dir = r'D:\songjiahao\DATA\Phone\phonecall_labels/'
+label_dir = r'F:\sjh\DATA2\xianyu\smoke_safe hat\labels\val/'
 
 label_dir = os.listdir(label_dir)
 for i in label_dir:
-    label_path = r'D:\songjiahao\DATA\Phone\phonecall_labels/' + i
+    label_path = r'F:\sjh\DATA2\xianyu\smoke_safe hat\labels\val/' + i
     ans = ''
     with open(label_path) as f:
         line = f.readline()
         while line:
             cls = int(line.split(' ')[0])
             if cls == 0:
-                ans = ans + '1'+ line[1:]
+                ans = ans + '2'+ line[1:]
 
             line = f.readline()
     print(ans)
