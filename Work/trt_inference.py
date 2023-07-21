@@ -2,8 +2,6 @@ from typing import Union, Optional, Sequence, Dict, Any
 
 import torch
 import tensorrt as trt
-from main import postprocess, decode
-
 class TRTWrapper(torch.nn.Module):
     def __init__(self, engine: Union[str, trt.ICudaEngine],
                  output_names: Optional[Sequence[str]] = None) -> None:
