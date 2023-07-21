@@ -19,7 +19,7 @@ model.eval()
 x = torch.randn(batch_size, *input_shape)	# 生成张量
 export_onnx_file = "test.onnx"			# 目的ONNX文件名
 torch.onnx.export(model,
-                    x,
+                  (x),
                     export_onnx_file,
                     opset_version=10,
                     do_constant_folding=True,	# 是否执行常量折叠优化
