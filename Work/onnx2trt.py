@@ -2,9 +2,9 @@ import onnx
 import tensorrt as trt
 # import sys
 # sys.setrecursionlimit(500000)
+import logging
 
-
-def onnx_export_engine(model_name, workspace):
+def onnx_export_engine(model_name, workspace, half=False):
     # path='weights/cam_fusion_net.onnx'
     # filename='onnxmodel'
     # model_name='breath_cls'
@@ -42,10 +42,9 @@ def onnx_export_engine(model_name, workspace):
     #     LOGGER.info(f'{prefix}\toutput "{out.name}" with shape {out.shape} and dtype {out.dtype}')
     #
     # LOGGER.info(f'{prefix} building FP{16 if builder.platform_has_fast_fp16 else 32} engine in {f}')
-
-    # if builder.platform_has_fast_fp16:
-    #
-    # config.set_flag(trt.BuilderFlag.FP16)
+    logging.info(f'Tensorrt building FP{16 if builder.platform_has_fast_fp16 and half else 32} engine as {f}')
+    if builder.platform_has_fast_fp16:
+        config.set_flag(trt.BuilderFlag.FP16)
     engine_path=model_name+'.engine'
     # with builder.build_engine(network,config) as engine:
     with builder.build_serialized_network(network,config) as engine:
@@ -58,4 +57,4 @@ if __name__ == '__main__':
     # model_names = ['modified_stable_diffusion']
     model_names = ['resnet']
     for modelname in model_names:
-        onnx_export_engine(modelname, 4)
+        onnx_export_engine(modelname, 4, half=False)
