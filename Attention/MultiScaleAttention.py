@@ -4,7 +4,6 @@ import torch.nn.functional as F
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from models.experimental import MixConv2d
 from torch.nn import init
 """
 #num_scales参数决定了注意力机制将考虑的不同尺度的数量。这个值取决于你想在你的模型中捕获的多尺度背景的水平和输入图像的大小。
