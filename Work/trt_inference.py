@@ -30,6 +30,7 @@ class TRTWrapper(torch.nn.Module):
         for input_name, input_tensor in inputs.items():
             # check if input shape is valid
             profile = self.engine.get_profile_shape(profile_id, input_name)
+            # profile = self.engine.get_tensor_profile_shape(input_name, profile_id)
             assert input_tensor.dim() == len(
                 profile[0]), 'Input dim is different from engine profile.'
             for s_min, s_input, s_max in zip(profile[0], input_tensor.shape,
@@ -63,12 +64,18 @@ class TRTWrapper(torch.nn.Module):
                                       torch.cuda.current_stream().cuda_stream)
         return outputs
 
+# if __name__=="__main__":
+#     model = TRTWrapper('resnet.engine', ['sigmoid_0.tmp_0'])
+#     input = torch.randn(1, 3, 224, 224)
+#     output = model(dict(x=input.cuda()))
+#     # simcc_x, simcc_y = output
+#     # keypoints, scores = decode(simcc_x, simcc_y, simcc_split_ratio)
+#     #
+#     # # rescale keypoints
+#     # keypoints = keypoints / model_input_size * scale + center - scale / 2
+#     print(output['sigmoid_0.tmp_0'])
 if __name__=="__main__":
-    model = TRTWrapper('end2end.engine', ['simcc_x', 'simcc_y'])
-    output = model(dict(input=torch.randn(1, 3, 256, 256).cuda()))
-    simcc_x, simcc_y = output
-    # keypoints, scores = decode(simcc_x, simcc_y, simcc_split_ratio)
-    #
-    # # rescale keypoints
-    # keypoints = keypoints / model_input_size * scale + center - scale / 2
-    print(output)
+    import cv2
+    img = cv2.imread(r'D:\project\7.4\untitled\data\a2.png')
+    print(img.shape)
+
