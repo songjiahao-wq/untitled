@@ -12,6 +12,8 @@ import random
 #     7. cutout
 # 注意:
 #     random.seed(),相同的seed,产生的随机数是一样的!!
+# need_aug_num #扩充数量
+# specific_name #增强特征类
 import sys
 import cv2
 import numpy as np
@@ -55,9 +57,12 @@ def show_pic(img, bboxes=None, labels=None):
         sys.exit()
 
 '''
+************************************args:************************************
 rotation_rate=0.5(旋转), max_rotation_angle=30（旋转）, crop_rate=0.5（裁剪）, shift_rate=0.5（平移）, change_light_rate=0.5（调整亮度）,change_saturation_rate=0.5（改变饱和度）,
 add_noise_rate=0.5（加噪声）, flip_rate=0.5（翻转）,
 cutout_rate=0.5（cutout）, cut_out_length=50, cut_out_holes=1, cut_out_threshold=0.5
+need_aug_num = 2 #扩充数量
+specific_name = '' #增强特征类
 '''
 # 图像均为cv2读取
 class DataAugmentForObjectDetection():
@@ -527,7 +532,7 @@ def save_xml(image_name, category, bbox, file_dir, save_dir, channel=3):
 
 
 need_aug_num = 2 #扩充数量
-
+specific_name = '' #增强特征类
 dataAug = DataAugmentForObjectDetection()
 
 source_pic_root_path = r'D:\my_job\code\xianyu\5.7\VOCdevkit3\VOC2007\JPEGImages/'  # 原图所在文件夹路径
@@ -551,7 +556,11 @@ for parent, _, files in os.walk(source_pic_root_path):
             if not os.path.exists(xml_path):
                 break
             coords = parse_xml(xml_path)  # 解析得到box信息，格式为[[x_min,y_min,x_max,y_max,name]]
-            coordss = [coord[:4] for coord in coords]
+            if specific_name =='':
+                coordss = [coord[:4] for coord in coords]
+            else:
+                print("增强特定类")
+                coordss = [coord[:4] for coord in coords if coord[4] == specific_name]
             labels = [coord[4] for coord in coords]
             img = cv2.imread(pic_path)
             show_pic(img, coordss, labels)  # 原图
