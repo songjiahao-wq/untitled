@@ -302,7 +302,27 @@ class DataAugmentForObjectDetection():
         for bbox in bboxes:
             crop_bboxes.append([bbox[0] - crop_x_min, bbox[1] - crop_y_min, bbox[2] - crop_x_min, bbox[3] - crop_y_min])
 
-        return crop_img, crop_bboxes
+        # ---------------------- 裁剪后的图像大小 ----------------------
+        crop_h, crop_w = crop_img.shape[0], crop_img.shape[1]
+
+        # 计算每侧的填充量
+        top_pad = crop_y_min
+        bottom_pad = h - crop_y_max
+        left_pad = crop_x_min
+        right_pad = w - crop_x_max
+
+        # 使用cv2.copyMakeBorder方法填充
+        # 这里填充的颜色是黑色，可以按需要更改
+        padded_img = cv2.copyMakeBorder(crop_img, top_pad, bottom_pad, left_pad, right_pad, cv2.BORDER_CONSTANT,
+                                        value=(0, 0, 0))
+
+        # 如果你的bounding boxes是相对于填充后的图像的，则需要将bounding box的坐标调整到填充后的图像上
+        for i in range(len(crop_bboxes)):
+            crop_bboxes[i][0] += left_pad
+            crop_bboxes[i][2] += left_pad
+            crop_bboxes[i][1] += top_pad
+            crop_bboxes[i][3] += top_pad
+        return padded_img, crop_bboxes
 
     # 平移
     def _shift_pic_bboxes(self, img, bboxes):
