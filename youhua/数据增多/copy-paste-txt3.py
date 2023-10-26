@@ -51,10 +51,10 @@ def random_paste(img, boxes):
 
     return img, new_boxes
 
-images_dir = r"E:\BaiduNetdiskDownload\KT5\images\train"
-labels_dir = r"E:\BaiduNetdiskDownload\KT5\labels\train"
-augmented_img_path = r"E:\BaiduNetdiskDownload\KT5\augimages\train"
-augmented_txt_path = r"E:\BaiduNetdiskDownload\KT5\auglabels\train"
+images_dir = r"E:\BaiduNetdiskDownload\KT5\test\images"
+labels_dir = r"E:\BaiduNetdiskDownload\KT5\test\labels"
+augmented_img_path = r"E:\BaiduNetdiskDownload\KT5\test\augimages"
+augmented_txt_path = r"E:\BaiduNetdiskDownload\KT5\test\auglabels"
 if not os.path.exists(augmented_img_path):
     os.makedirs(augmented_img_path)
 if not os.path.exists(augmented_txt_path):
