@@ -25,19 +25,27 @@ def random_paste(img, boxes):
     extracted_objects = []
 
     for box in boxes:
-        if box[0] == 0:  # if the label is person
-            x_center, y_center, width, height = box[1:]
-            x1, y1 = int((x_center - width / 2) * w), int((y_center - height / 2) * h)
-            x2, y2 = int((x_center + width / 2) * w), int((y_center + height / 2) * h)
-            extracted_objects.append(((x1, y1, x2, y2), img[y1:y2, x1:x2]))
+        box_id = box[0]  # Extract the original ID
+        x_center, y_center, width, height = box[1:]
+        x1, y1 = int((x_center - width / 2) * w), int((y_center - height / 2) * h)
+        x2, y2 = int((x_center + width / 2) * w), int((y_center + height / 2) * h)
+        extracted_objects.append((box_id, (x1, y1, x2, y2), img[y1:y2, x1:x2]))
 
-    for i in range(random.randint(1,3)):  # paste three times
+    for i in range(3):  # paste three times
         if not extracted_objects:
             break
-        _, obj_img = random.choice(extracted_objects)
+        box_id, _, obj_img = random.choice(extracted_objects)  # Extract the original ID
         oh, ow, _ = obj_img.shape
-
+        tims1 = 0
+        while ow > 250 or oh > 250:
+            box_id, _, obj_img = random.choice(extracted_objects)  # Extract the original ID
+            oh, ow, _ = obj_img.shape
+            tims1 += 1
+            if tims1 > 15:
+                break
         while True:
+            if w-ow-1 == 0 or h - oh - 1 == 0 or tims1 > 15:
+                break
             x1 = random.randint(0, w - ow - 1)
             y1 = random.randint(0, h - oh - 1)
             x2, y2 = x1 + ow, y1 + oh
@@ -45,16 +53,19 @@ def random_paste(img, boxes):
             overlap = any([iou((x1, y1, x2, y2), box[1:]) > 0.2 for box in new_boxes])
             if not overlap:
                 break
-
-        img[y1:y2, x1:x2] = obj_img
-        new_boxes.append([0, (x1 + x2) / (2 * w), (y1 + y2) / (2 * h), ow / w, oh / h])
+        try:
+            img[y1:y2, x1:x2] = obj_img
+        except:
+            continue
+        new_boxes.append([box_id, (x1 + x2) / (2 * w), (y1 + y2) / (2 * h), ow / w, oh / h])  # Use the original ID
 
     return img, new_boxes
 
-images_dir = r"E:\BaiduNetdiskDownload\KT5\test\images"
-labels_dir = r"E:\BaiduNetdiskDownload\KT5\test\labels"
-augmented_img_path = r"E:\BaiduNetdiskDownload\KT5\test\augimages"
-augmented_txt_path = r"E:\BaiduNetdiskDownload\KT5\test\auglabels"
+
+images_dir = r"D:\BaiduNetdiskDownload\KT5\images\train"
+labels_dir = r"D:\BaiduNetdiskDownload\KT5\labels\train"
+augmented_img_path = r"D:\BaiduNetdiskDownload\KT5\augimages\train"
+augmented_txt_path = r"D:\BaiduNetdiskDownload\KT5\auglabels\train"
 if not os.path.exists(augmented_img_path):
     os.makedirs(augmented_img_path)
 if not os.path.exists(augmented_txt_path):
@@ -62,6 +73,7 @@ if not os.path.exists(augmented_txt_path):
 # Load image and labels
 image_files = os.listdir(images_dir)
 for image_file in image_files:
+    print(image_file)
     # Determine the file extension (either .jpg or .png)
     file_extension = '.jpg' if '.jpg' in image_file else '.png'
 
