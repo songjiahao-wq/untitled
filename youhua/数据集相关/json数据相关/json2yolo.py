@@ -1,48 +1,55 @@
 import os
 import json
+# 类别映射
+class_mapping = {
+    "E2": 0,  # 你需要根据你的实际情况进行修改
+    "B52": 0,
+    "B2": 0,
+    "Mirage2000": 0,
+    "F4": 0,
+    "F14": 0,
+    "Tornado": 0,
+    "J20": 0,
+    "JAS39": 0,
+    # 可以根据你的需求添加更多的类别映射
+}
 
-json_dir = r'D:\my_job\MY_Github\MY-mmdetection\data\coco\dataset\test\json/'  # json文件路径
-out_dir = r'D:\my_job\MY_Github\MY-mmdetection\data\coco\dataset\test\txt/'  # 输出的 txt 文件路径
+# 转换坐标格式为 YOLO 格式
+def convert_coordinates(points, img_width, img_height):
+    x1, y1 = float(points[0][0]), float(points[0][1])
+    x2, y2 = float(points[3][0]), float(points[3][1])
 
-# 0.创建保存转换结果的文件夹
-if (not os.path.exists(out_dir)):
-    os.makedirs(out_dir)
-def get_json(json_file, filename):
-    # 读取 json 文件数据
-    with open(json_file, 'r') as load_f:
-        content = json.load(load_f)
+    # 计算中心点和宽高
+    x_center = (x1 + x2) / 2
+    y_center = (y1 + y2) / 2
+    bbox_width = abs(x2 - x1)
+    bbox_height = abs(y2 - y1)
 
-    # # 循环处理
-    tmp = filename
-    filename_txt = out_dir + tmp + '.txt'
-    # 创建txt文件
-    fp = open(filename_txt, mode="w", encoding="utf-8")
-    # 将数据写入文件
-    # 计算 yolo 数据格式所需要的中心点的 相对 x, y 坐标, w,h 的值
-    x = int((content["shapes"][0])["points"][0][0])
-    y = int((content["shapes"][0])["points"][0][1])
-    w = int((content["shapes"][0])["points"][1][0]) - int((content["shapes"][0])["points"][0][0])
-    h = int((content["shapes"][0])["points"][1][1]) - int((content["shapes"][0])["points"][0][1])
-    fp = open(filename_txt, mode="r+", encoding="utf-8")
-    file_str = str(filename) + ' ' + str(round(x, 6)) + ' ' + str(round(y, 6)) + ' ' + str(round(w, 6)) + \
-               ' ' + str(round(h, 6))
-    line_data = fp.readlines()
+    # 将坐标转换为相对于图片宽度和高度的比例
+    x_center = x_center / img_width
+    y_center = y_center / img_height
+    bbox_width = bbox_width / img_width
+    bbox_height = bbox_height / img_height
 
-    if len(line_data) != 0:
-        fp.write('\n' + file_str)
-    else:
-        fp.write(file_str)
-    fp.close()
+    return x_center, y_center, bbox_width, bbox_height
 
+# 处理整个目录
+input_directory = r'D:\xian_yu\code\yolov5-master\dataset\test\json'  # 替换为你的输入目录
+output_directory = r'D:\xian_yu\code\yolov5-master\dataset\test\labels'  # 替换为你的输出目录
 
-def main():
-    files = os.listdir(json_dir)  # 得到文件夹下的所有文件名称
-    s = []
-    for file in files:  # 遍历文件夹
-        filename = file.split('.')[0]
-        # print(tmp)
-        get_json(json_dir + file, filename)
+for filename in os.listdir(input_directory):
+    if filename.endswith(".json"):
+        with open(os.path.join(input_directory, filename)) as f:
+            data = json.load(f)
+            img_width = int(data['imageWidth'])
+            img_height = int(data['imageHeight'])
 
-
-if __name__ == '__main__':
-    main()
+            # 保存为 YOLO 的 TXT 文件
+            with open(os.path.join(output_directory, filename.replace(".json", ".txt")), 'w') as output_file:
+                for shape in data['shapes']:
+                    label = shape['label']
+                    class_id = class_mapping.get(label)
+                    if class_id is not None:
+                        coordinates = convert_coordinates(shape['points'], img_width, img_height)
+                        line = f"{class_id} {' '.join(map(str, coordinates))}"
+                        output_file.write(line + "\n")
