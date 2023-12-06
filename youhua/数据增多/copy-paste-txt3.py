@@ -1,8 +1,14 @@
+# -*- coding: utf-8 -*-
+# @Time    : 2023/12/6 14:00
+# @Author  : sjh
+# @Site    : 
+# @File    : 1.py
+# @Comment :
+
 import cv2
-import numpy as np
 import os
 import random
-import random
+# 计算两个边界框之间的交并比（Intersection over Union, IoU）
 def iou(boxA, boxB):
     """
     Compute the Intersection over Union (IoU) between two bounding boxes.
@@ -18,7 +24,7 @@ def iou(boxA, boxB):
     iou = interArea / float(boxAArea + boxBArea - interArea)
 
     return iou
-
+# 在图像上随机粘贴边界框内的对象
 def random_paste(img, boxes):
     h, w, _ = img.shape
     new_boxes = boxes.copy()
@@ -49,7 +55,7 @@ def random_paste(img, boxes):
             x1 = random.randint(0, w - ow - 1)
             y1 = random.randint(0, h - oh - 1)
             x2, y2 = x1 + ow, y1 + oh
-
+            # 随机选择一个新位置，使得对象不超出原图像边界，并确保新位置与 new_boxes 中已有的边界框不重叠（IoU小于0.2）。
             overlap = any([iou((x1, y1, x2, y2), box[1:]) > 0.2 for box in new_boxes])
             if not overlap:
                 break
@@ -92,4 +98,3 @@ for image_file in image_files:
     with open(os.path.join(augmented_txt_path, image_file.replace(file_extension, '.txt')), 'w') as f:
         for box in augmented_boxes:
             f.write(" ".join(map(str, box)) + '\n')
-
