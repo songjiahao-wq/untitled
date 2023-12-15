@@ -1,6 +1,15 @@
 import os
 """
-    
+    --base_dir
+        --VisDrone2019-DET-train
+        --VisDrone2019-DET-train
+        --VisDrone2019-DET-val
+        --VisDrone2019-DET-test-dev
+convert to:
+        --trainval
+        --train
+        --val
+        --test
 """
 # Define the directory names for train, validation, test-dev datasets
 directories = {
