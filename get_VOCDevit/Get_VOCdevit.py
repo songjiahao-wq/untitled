@@ -1,6 +1,18 @@
 import os
 import shutil
-
+# 已划分的转为VOCdevkit格式
+"""
+    --data_dir
+        --train
+            --images
+            -annotations
+        --valid
+            --images
+            -annotations
+        --test
+            --images
+            -annotations
+"""
 # 路径配置
 data_dir = r'D:\xian_yu\xianyun_lunwen\吸烟和打手机识别\大论文抽打数据集\final_data_small'  # 修改为您数据集的路径
 vocdevkit_dir = r'D:\xian_yu\xianyun_lunwen\吸烟和打手机识别\大论文抽打数据集\final_data_small/VOCdevkit'  # 修改为VOCdevkit的路径

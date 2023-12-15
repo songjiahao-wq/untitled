@@ -1,7 +1,11 @@
 import os
 import glob
 from PIL import Image
-
+"""
+    --voc_annotations
+    --yolo_txt
+    --img_path
+"""
 voc_annotations = r'D:\xian_yu\xianyun_lunwen\吸烟和打手机识别\大论文抽打数据集\final_data_small\test/annotations/'
 yolo_txt = r'D:\xian_yu\xianyun_lunwen\吸烟和打手机识别\大论文抽打数据集\final_data_small\test/labels/'
 img_path = r'D:\xian_yu\xianyun_lunwen\吸烟和打手机识别\大论文抽打数据集\final_data_small\test/images/'
