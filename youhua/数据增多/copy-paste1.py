@@ -43,12 +43,23 @@ def paste_object(bg_img, obj_img, position):
     bg_img[y:y+h, x:x+w] = obj_img
     return bg_img
 
-def update_label(labels, obj_label, position, scale_factor, img_shape):
+def update_label(labels, obj_label, position, scale_factor, img_shape, obj_shape):
     x_center, y_center, width, height = obj_label[1:]
-    x_center = (x_center * img_shape[1] + position[1]) / img_shape[1]
-    y_center = (y_center * img_shape[0] + position[0]) / img_shape[0]
-    width *= scale_factor
-    height *= scale_factor
+    obj_width = width * scale_factor * obj_shape[1]
+    obj_height = height * scale_factor * obj_shape[0]
+
+    # 将中心点转换为绝对坐标
+    abs_x_center = position[1] + obj_width / 2
+    abs_y_center = position[0] + obj_height / 2
+
+    # 将中心点转换回归一化坐标
+    x_center = abs_x_center / img_shape[1]
+    y_center = abs_y_center / img_shape[0]
+
+    # 更新宽度和高度为归一化坐标
+    width = obj_width / img_shape[1]
+    height = obj_height / img_shape[0]
+
     labels.append([obj_label[0], x_center, y_center, width, height])
     return labels
 
@@ -80,6 +91,7 @@ def copypaste_data_augmentation(background_dir, obj_dir, output_dir, max_objects
             obj_img_path = os.path.join(obj_images_dir, obj_name)
             obj_label_path = os.path.join(obj_labels_dir, obj_name.replace('.jpg', '.txt'))
             obj_img = cv2.imread(obj_img_path)
+            org_shape = obj_img.shape
             obj_labels = parse_label_file(obj_label_path)
             for obj_label in obj_labels:
                 extracted_obj = extract_object(obj_img, obj_label[1:])
@@ -93,7 +105,7 @@ def copypaste_data_augmentation(background_dir, obj_dir, output_dir, max_objects
                     max_x = max(bg_img.shape[1] - extracted_obj.shape[1], 0)
                     position = (random.randint(0, max_y), random.randint(0, max_x))
                     bg_img = paste_object(bg_img, obj_img, position)
-                    bg_labels = update_label(bg_labels, obj_label, position, scale_factor, bg_img.shape)
+                    bg_labels = update_label(bg_labels, obj_label, position, scale_factor, bg_img.shape, org_shape)
 
         output_img_path = os.path.join(output_dir, 'images', bg_img_name)
         output_label_path = os.path.join(output_dir, 'labels', bg_img_name.replace('.jpg', '.txt'))
