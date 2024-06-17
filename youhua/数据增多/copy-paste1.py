@@ -74,7 +74,41 @@ def extract_object(img, bbox):
     w = int(width * img.shape[1])
     h = int(height * img.shape[0])
     return img[y:y+h, x:x+w]
-def copypaste_data_augmentation(background_dir, obj_dir, output_dir, max_objects=1):
+def calculate_iou(bbox1, bbox2):
+    """
+    计算两个边界框的交并比（IOU）
+    bbox 格式：[类别, x_center, y_center, width, height]
+    """
+    x1, y1, w1, h1 = bbox1[1:]
+    x2, y2, w2, h2 = bbox2[1:]
+    # 转换为左上角和右下角坐标
+    x1_min, y1_min = x1 - w1/2, y1 - h1/2
+    x1_max, y1_max = x1 + w1/2, y1 + h1/2
+    x2_min, y2_min = x2 - w2/2, y2 - h2/2
+    x2_max, y2_max = x2 + w2/2, y2 + h2/2
+    # 计算交集区域
+    intersect_min_x = max(x1_min, x2_min)
+    intersect_min_y = max(y1_min, y2_min)
+    intersect_max_x = min(x1_max, x2_max)
+    intersect_max_y = min(y1_max, y2_max)
+    intersect_area = max(0, intersect_max_x - intersect_min_x) * max(0, intersect_max_y - intersect_min_y)
+    # 计算并集区域
+    union_area = w1 * h1 + w2 * h2 - intersect_area
+    return intersect_area / union_area if union_area > 0 else 0
+
+def is_position_valid(position, obj_shape, bg_labels, scale_factor, img_shape, iou_threshold=0.2):
+    """
+    检查给定位置是否有效，不与背景标签重叠或重叠很少
+    """
+    obj_label = [0, position[1] / img_shape[1] + (obj_shape[1] * scale_factor / 2) / img_shape[1],
+                    position[0] / img_shape[0] + (obj_shape[0] * scale_factor / 2) / img_shape[0],
+                    obj_shape[1] * scale_factor / img_shape[1],
+                    obj_shape[0] * scale_factor / img_shape[0]]
+    for bg_label in bg_labels:
+        if calculate_iou(obj_label, bg_label) > iou_threshold:
+            return False
+    return True
+def copypaste_data_augmentation(background_dir, obj_dir, output_dir, max_objects=1, max_attempts=20):
     bg_images_dir = os.path.join(background_dir, 'images')
     bg_labels_dir = os.path.join(background_dir, 'labels')
     obj_images_dir = os.path.join(obj_dir, 'images')
@@ -99,13 +133,19 @@ def copypaste_data_augmentation(background_dir, obj_dir, output_dir, max_objects
 
                     obj_label = obj_labels[0]
                     obj_img, scale_factor = resize_object(extracted_obj, random.uniform(0.5, 0.8))
-                    if obj_img.shape[0] > bg_img.shape[0] or obj_img.shape[1] > bg_img.shape[1]:
-                        break
-                    max_y = max(bg_img.shape[0] - extracted_obj.shape[0], 0)
-                    max_x = max(bg_img.shape[1] - extracted_obj.shape[1], 0)
-                    position = (random.randint(0, max_y), random.randint(0, max_x))
-                    bg_img = paste_object(bg_img, obj_img, position)
-                    bg_labels = update_label(bg_labels, obj_label, position, scale_factor, bg_img.shape, org_shape)
+                    attempt = 0
+                    while attempt < max_attempts:
+                        if obj_img.shape[0] > bg_img.shape[0] or obj_img.shape[1] > bg_img.shape[1]:
+                            break
+                        max_y = max(bg_img.shape[0] - obj_img.shape[0], 0)
+                        max_x = max(bg_img.shape[1] - obj_img.shape[1], 0)
+                        position = (random.randint(0, max_y), random.randint(0, max_x))
+                        if is_position_valid(position, obj_img.shape, bg_labels, scale_factor, bg_img.shape, iou_threshold=0.0):
+                            bg_img = paste_object(bg_img, obj_img, position)
+                            bg_labels = update_label(bg_labels, obj_label, position, scale_factor, bg_img.shape,
+                                                     org_shape)
+                            break
+                        attempt += 1
 
         output_img_path = os.path.join(output_dir, 'images', bg_img_name)
         output_label_path = os.path.join(output_dir, 'labels', bg_img_name.replace('.jpg', '.txt'))

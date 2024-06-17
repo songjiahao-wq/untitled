@@ -2,12 +2,13 @@
 import shutil
 import random
 import os
+from tqdm import tqdm
 
 # 原始路径
-image_original_path = r'D:\yanyi\xianyu\xirou\images/'
-label_original_path = r'D:\yanyi\xianyu\xirou\labels/'
+image_original_path = r'E:\Download\Datasets\football\Football Analyzer.v1i.yolov8\train\images/'
+label_original_path = r'E:\Download\Datasets\football\Football Analyzer.v1i.yolov8\train\labels/'
 # 复制文件总路径
-src_root = r'D:\yanyi\xianyu\xirou\yolo'
+src_root = r'E:\Download\Datasets\football\Football Analyzer.v1i.yolov8\train\yolo'
 # 训练集路径
 train_image_path = src_root + '/images/train/'
 train_label_path = src_root + '/labels/train/'
@@ -20,8 +21,8 @@ test_label_path = src_root + '/labels/test/'
 
 # 数据集划分比例，训练集75%，验证集15%，测试集15%
 train_percent = 0.7
-val_percent = 0.1
-test_percent = 0.2
+val_percent = 0.15
+test_percent = 0.15
 # 数据集划分数量，训练集800，验证集800，测试集800
 # num_train = 850
 # num_val = 800
@@ -69,7 +70,7 @@ def main():
     print(len(list_c))
 
     # print("训练集数目：{}, 验证集数目：{},测试集数目：{}".format(len(train), len(val), len(val_test) - len(val)))
-    for i in list_all_txt:
+    for i in tqdm(list_all_txt):
         name = total_txt[i][:-4]
 
         srcImage = image_original_path + name + '.jpg'
