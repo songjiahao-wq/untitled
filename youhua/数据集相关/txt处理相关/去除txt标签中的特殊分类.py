@@ -2,7 +2,7 @@ import glob
 import os
 from tqdm import tqdm
 # 获取当前目录下所有的txt文件
-txt_files = glob.glob(r"E:\Download\Datasets\football\Football Analyzer.v1i.yolov8\train\labels/*.txt")
+txt_files = glob.glob(r"E:\BaiduNetdiskDownload\crow/*.txt")
 
 for txt_file in tqdm(txt_files):
 

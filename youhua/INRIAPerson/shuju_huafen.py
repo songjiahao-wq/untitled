@@ -4,10 +4,10 @@ import random
 import os
 
 # 原始路径
-image_original_path = r'D:\yanyi\xianyu\xirou\images/'
-label_original_path = r'D:\yanyi\xianyu\xirou\labels/'
+image_original_path = r'E:\BaiduNetdiskDownload\Crowdhuman\images/'
+label_original_path = r'E:\BaiduNetdiskDownload\Crowdhuman\labels/'
 # 复制文件总路径
-src_root = r'D:\yanyi\xianyu\xirou\yolo'
+src_root = r'E:\BaiduNetdiskDownload\Crowdhuman\yolo'
 # 训练集路径
 train_image_path = src_root + '/images/train/'
 train_label_path = src_root + '/labels/train/'
@@ -19,9 +19,9 @@ test_image_path = src_root + '/images/test/'
 test_label_path = src_root + '/labels/test/'
 
 # 数据集划分比例，训练集75%，验证集15%，测试集15%
-train_percent = 0.7
-val_percent = 0.1
-test_percent = 0.2
+train_percent = 0.85
+val_percent = 0.15
+test_percent = 0.0
 # 数据集划分数量，训练集800，验证集800，测试集800
 # num_train = 850
 # num_val = 800
@@ -50,23 +50,24 @@ def main():
 
     total_txt = os.listdir(label_original_path)
     num_txt = len(total_txt)
-    list_all_txt = range(num_txt)  # 范围 range(0, num)
-    if train_percent:
-        num_train = int(num_txt * train_percent)
-        num_val = int(num_txt * val_percent)
-        num_test = num_txt - num_train - num_val
+    list_all_txt = list(range(num_txt))  # 将范围对象转换为列表
 
-    train = random.sample(list_all_txt, num_train) #打乱顺序
-    # train从list_all_txt取出num_train个元素
-    # 所以list_all_txt列表只剩下了这些元素：val_test
-    val_test = [i for i in list_all_txt if not i in train]
-    # 再从val_test取出num_val个元素，val_test剩下的元素就是test
-    val = random.sample(val_test, num_val)
-    # 检查两个列表元素是否有重合的元素
-    set_c = set(val_test) & set(val)
-    list_c = list(set_c)
-    print(list_c)
-    print(len(list_c))
+    num_train = int(num_txt * train_percent)
+    num_val = int(num_txt * val_percent)
+    num_test = num_txt - num_train - num_val
+
+    # 训练集划分
+    train = random.sample(list_all_txt, num_train)
+    remaining = [i for i in list_all_txt if i not in train]
+
+    # 验证集划分
+    val = random.sample(remaining, num_val)
+
+    # 剩余数据作为测试集
+    test = [i for i in remaining if i not in val]
+
+    print(f"Train set size: {len(train)}, Validation set size: {len(val)}, Test set size: {len(test)}")
+
 
     # print("训练集数目：{}, 验证集数目：{},测试集数目：{}".format(len(train), len(val), len(val_test) - len(val)))
     for i in list_all_txt:
