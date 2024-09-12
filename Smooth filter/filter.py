@@ -3,7 +3,7 @@
 # @Author  : sjh
 # @Site    : 
 # @File    : filter.py
-# @Comment :
+# @Comment : https://github.com/davidpagnon/Sports2D.git
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -94,7 +94,7 @@ def gaussian_filter_1d(col, kernel):
     return col_filtered
 
 
-def loess_filter_1d(col, kernel):
+def loess_filter_1d(col, kernel=5):
     '''
     1D LOWESS filter (Locally Weighted Scatterplot Smoothing)
 
@@ -124,7 +124,7 @@ def loess_filter_1d(col, kernel):
     return col_filtered
 
 
-def median_filter_1d(col, kernel):
+def median_filter_1d(col, kernel=3):
     '''
     1D median filter
 
