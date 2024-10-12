@@ -22,8 +22,9 @@ def count_categories(directory):
     return categories
 
 
-directory = r"D:\xian_yu\data(1)\shudianxianluquexian\txt"  # 修改为你的目录路径
+directory = r"D:\xian_yu\xianyu_project\su ke da\2\datasets\root\project\datasets\labels"  # 修改为你的目录路径
 categories = count_categories(directory)
 
-for category, count in categories.items():
+for category, count in sorted(categories.items(), reverse=False):
     print(f"Category: {category}, Count: {count}")
+
