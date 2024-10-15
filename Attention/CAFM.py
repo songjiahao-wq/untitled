@@ -13,7 +13,7 @@ import torch
 import torch.nn as nn
 from einops import rearrange
 import torch.nn.functional as F
-# Define the Attention class as provided in the snippet
+#  Convolution and Attention Fusion Module  (CAFM)
 class Attention(nn.Module):
     def __init__(self, dim, num_heads, bias):
         super(Attention, self).__init__()
