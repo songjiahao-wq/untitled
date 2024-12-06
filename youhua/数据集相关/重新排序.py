@@ -1,16 +1,26 @@
 import os
+import shutil
 
-def rename_images(directory):
-    # 获取文件夹中所有的.jpg文件
-    files = [file for file in os.listdir(directory)]
-    files.sort()  # 如果需要，可以根据需要排序文件
-    strat = 5555555
+# 设置目标文件夹路径
+folder_path = r"E:\project2024\KinectV2\KinectV2\Chessboard\IR"
+
+# 获取所有 .jpg 文件
+jpg_files = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
+
+# 按照文件名排序（如果文件名有数字或日期等，按字母或数字顺序）
+jpg_files.sort()
+
+# 对文件进行重新命名
+for i, file_name in enumerate(jpg_files):
+    i = i + 0
+    # 构造新文件名，重新从 0 开始
+    new_name = f"{i}.jpg"
+
+    # 获取文件的完整路径
+    old_path = os.path.join(folder_path, file_name)
+    new_path = os.path.join(folder_path, new_name)
+
     # 重命名文件
-    for i, file in enumerate(files):
-        new_filename = f"{i+strat:012}.txt"  # 生成新的文件名，如 000001.jpg, 000002.jpg, 等
-        os.rename(os.path.join(directory, file), os.path.join(directory, new_filename))
-        print(f"Renamed {file} to {new_filename}")
+    os.rename(old_path, new_path)
 
-# 使用示例
-directory = r'D:\BaiduSyncdisk\work\YOLO\YOLOv8_trt\ultralytics\runs\detect\labels'  # 将此路径替换为你的图片文件夹的路径
-rename_images(directory)
+    print(f"Renamed: {file_name} -> {new_name}")
