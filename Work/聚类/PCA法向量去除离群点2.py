@@ -8,12 +8,13 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import time
 
 # 1. 构造平面上的点 (Z = 0.5)，加一点离群
 np.random.seed(42)
 plane_pts = np.random.rand(15, 2)
 plane_pts = np.hstack((plane_pts, np.full((15, 1), 0.5)))  # Z=0.5
-outlier = np.array([[0.5, 0.5, 2.0]])
+outlier = np.array([[0.5, 0.5, 0.8]])
 points = np.vstack((plane_pts, outlier))
 
 # 2. 用 PCA 分析每个点的局部法向量
@@ -31,8 +32,9 @@ def estimate_normals_pca(points, k=6):
         normal = vh[-1]  # 主轴方向（最小方差）
         normals.append(normal)
     return np.array(normals)
-
+t1 = time.time()
 normals = estimate_normals_pca(points)
+print("计算法向量耗时:", time.time() - t1)
 
 # 3. 计算法向量与平均法向量的夹角（余弦）
 avg_normal = np.mean(normals[:-1], axis=0)

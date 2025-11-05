@@ -46,15 +46,16 @@ def remove_outliers_by_normal_consistency(points: np.ndarray, k: int = 6, cos_th
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
-
+    import time
     # 构造测试数据
     plane_pts = np.random.rand(15, 2)
     plane_pts = np.hstack((plane_pts, np.full((15, 1), 0.5)))  # Z平面
-    outlier = np.array([[0.5, 0.5, 2.0]])  # 明显离群
+    # 添加一个“轻微”离群点（稍微偏离平面）
+    outlier = np.array([[0.5, 0.5, 0.8]])
     points = np.vstack((plane_pts, outlier))
-
+    t1 = time.time()
     filtered_points, mask = remove_outliers_by_normal_consistency(points)
-
+    print("去除离群点耗时:", time.time() - t1)
     # 可视化前后对比
     fig = plt.figure(figsize=(12, 6))
 

@@ -3,9 +3,10 @@
 
 import os
 
-label_dir = r'C:\Users\11097\Desktop\labels/'
+label_dir_path = r'C:\Users\11097\Desktop\labels/'
 
-label_dir = os.listdir(label_dir)
+label_dir = os.listdir(label_dir_path)
+label_dir = [f for f in label_dir if f.endswith('.txt')]
 for i in label_dir:
     label_path = r'C:\Users\11097\Desktop\labels/' + i
     ans = ''

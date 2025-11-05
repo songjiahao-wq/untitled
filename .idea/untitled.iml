@@ -5,7 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/youhua/datasets" />
       <excludeFolder url="file://$MODULE_DIR$/cifar-10/cifar-10" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.9 (torch)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="torch (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
