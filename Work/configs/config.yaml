@@ -1,0 +1,13 @@
+# 模型训练配置
+training:
+  batch_size: 64  # 批大小
+  lr: 0.001
+  use_gpu: true
+
+# 数据库配置
+  optimizer: adam
+database:
+  host: 192.168.1.10
+  port: 3306
+  user: root
+  password: 123456
